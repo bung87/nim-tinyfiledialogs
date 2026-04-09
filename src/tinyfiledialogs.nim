@@ -35,28 +35,29 @@
 
 proc tinyfd_beep*(): void {.importc.}
 
-proc tinyfd_notifyPopup*(aTitle: cstring, aMessage: cstring, aDialogType: cstring, aIconType: cstring, aDefaultButton: range[0..2]): cint {.importc.}
+proc tinyfd_notifyPopup*(aTitle: cstring, aMessage: cstring, aIconType: cstring): cint {.importc.}
 
 proc tinyfd_messageBox*(aTitle: cstring, aMessage: cstring, aDialogType: cstring, aIconType: cstring, aDefaultButton: range[0..2]): cint {.importc.}
 
 proc tinyfd_inputBox*(aTitle: cstring, aMessage: cstring, aDefaultInput: cstring = nil): cstring {.importc.}
 
-proc tinyfd_openFileDialog*(aTitle: cstring, aDefaultPathAndFile: cstring, aNumOfFilterPatterns: cint = 0, aFilterPattern: cstring = "*.*", aSingleFilterDescription: cstring = "", aAllowMultipleSelects: range[0..1] = 0): cstring {.importc.}
+proc tinyfd_saveFileDialog*(aTitle: cstring, aDefaultPathAndOrFile: cstring, aNumOfFilterPatterns: cint = 0, aFilterPatterns: cstringArray = nil, aSingleFilterDescription: cstring = nil): cstring {.importc.}
 
-proc tinyfd_saveFileDialog*(aTitle: cstring, aDefaultPathAndFile: cstring, aNumOfFilterPatterns: cint = 0, aFilterPatterns: cstring = "*.*", aSingleFilterDescription: cstring = "", aAllowMultipleSelects: range[0..1] = 0): cstring {.importc.}
+proc tinyfd_openFileDialog*(aTitle: cstring, aDefaultPathAndOrFile: cstring, aNumOfFilterPatterns: cint = 0, aFilterPatterns: cstringArray = nil, aSingleFilterDescription: cstring = nil, aAllowMultipleSelects: range[0..1] = 0): cstring {.importc.}
 
 proc tinyfd_selectFolderDialog*(aTitle: cstring, aDefaultPath: cstring): cstring {.importc.}
 
-proc tinyfd_colorChooser*(aTitle: cstring, aDefaultHexRGB: cstring; aDefaultRGB: array[3, uint8]): cstring {.importc.}
+proc tinyfd_colorChooser*(aTitle: cstring, aDefaultHexRGB: cstring, aDefaultRGB: array[3, uint8], aoResultRGB: array[3, uint8]): cstring {.importc.}
 
 
 runnableExamples:
   tinyfd_beep()
-  echo tinyfd_notifyPopup("Title", "aMessage", "yesnocancel", "info", 1)
+  echo tinyfd_notifyPopup("Title", "aMessage", "info")
   echo tinyfd_messageBox("Title", "aMessage", "yesnocancel", "info", 1)
   echo tinyfd_inputBox("a password box", "some message")               # Password.
   echo tinyfd_inputBox("plain text box", "some message", "any string") # Plain Text.
   echo tinyfd_openFileDialog("You can Open Files with this", "")
   echo tinyfd_saveFileDialog("You can Save Files with this", "")
   echo tinyfd_selectFolderDialog("You can Open Folders with this", "")
-  echo tinyfd_colorChooser("Color Picker", "#FF0000", [0.uint8 , 128 , 255])
+  var resultRGB: array[3, uint8]
+  echo tinyfd_colorChooser("Color Picker", "#FF0000", [0.uint8 , 128 , 255], resultRGB)
