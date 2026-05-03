@@ -33,6 +33,9 @@
 
 {.compile: "tinyfiledialogs.c".}
 
+when defined(windows):
+  {.passL: "-lcomdlg32 -lole32 -lshell32 -luser32".}
+
 proc tinyfd_beep*(): void {.importc.}
 
 proc tinyfd_notifyPopup*(aTitle: cstring, aMessage: cstring, aIconType: cstring): cint {.importc.}
