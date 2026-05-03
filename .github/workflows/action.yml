@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  push:
+    paths-ignore: 
+      - README.md
+  pull_request:
+    paths-ignore: 
+      - README.md
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            nim-version: stable
+            experimental: false
+          - os: ubuntu-latest
+            nim-version: devel
+            experimental: false
+          - os: windows-latest
+            nim-version: stable
+            experimental: true
+          - os: macos-latest
+            nim-version: stable
+            experimental: true
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Cache nimble
+      id: cache-nimble
+      uses: actions/cache@v4
+      with:
+        path: ~/.nimble
+        key: ${{ runner.os }}-nimble-jiro2-${{ matrix.nim-version}}-${{ hashFiles('*.nimble') }}
+        restore-keys: |
+          ${{ runner.os }}-nimble-jiro2-${{ matrix.nim-version}}-
+      if: runner.os != 'Windows'
+    - name: Setup nim
+      uses: jiro4989/setup-nim-action@v2
+      with:
+        nim-version: ${{ matrix.nim-version }}
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        use-nightlies: ${{ matrix.nim-version == 'devel' }}
+
+    - name: Install Packages
+      run: nimble install -d -y
+   
+    - name: Build
+      run: nimble c src/tinyfiledialogs.nim
